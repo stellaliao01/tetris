@@ -1,0 +1,11 @@
+# Node.js dependencies
+node_modules/
+
+# Build output
+public/
+
+# Ignore package-lock.json since we are using Yarn
+package-lock.json
+
+# Ignore .zshrc (personal shell configuration)
+.zshrc
