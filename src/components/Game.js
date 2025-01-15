@@ -8,7 +8,7 @@ const createBoard = () =>
 
 export const Game = () => {
   const [board, setBoard] = useState(createBoard());
-  const [tetromino, _setTetromino] = useState(randomTetromino());
+  const [tetromino, setTetromino] = useState(randomTetromino());
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const dropTetromino = () => {
@@ -16,6 +16,23 @@ export const Game = () => {
       x: prev.x,
       y: prev.y + 1,
     }));
+  };
+
+  const moveTetromino = (dir) => {
+    setPosition((prev) => ({
+      x: prev.x + dir,
+      y: prev.y,
+    }));
+  };
+
+  const rotateTetromino = () => {
+    const rotatedTetromino = {
+      ...tetromino,
+      shape: tetromino.shape[0].map((_, index) =>
+        tetromino.shape.map((row) => row[index]).reverse()
+      ),
+    };
+    setTetromino(rotatedTetromino);
   };
 
   const updateBoard = () => {
@@ -29,6 +46,23 @@ export const Game = () => {
     });
     setBoard(newBoard);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'ArrowLeft') {
+        moveTetromino(-1);
+      } else if (event.key === 'ArrowRight') {
+        moveTetromino(1);
+      } else if (event.key === 'ArrowDown') {
+        dropTetromino();
+      } else if (event.key === 'ArrowUp') {
+        rotateTetromino();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
