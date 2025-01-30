@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Board from './Board';
 import { randomTetromino } from './Tetrominoes';
 import { DEFAULT_ROW, DEFAULT_COL } from '../utils/constants';
@@ -9,19 +9,47 @@ const createBoard = () =>
 export const Game = () => {
   const [board, setBoard] = useState(createBoard());
   const [tetromino, setTetromino] = useState(randomTetromino());
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ col: 3, row: 0 });
+
+  const tetrominoPositions = useMemo(() => {
+    const colPositions = [];
+    const rowPositions = [];
+    tetromino.shape.forEach((row, y) => {
+      row.forEach((value, x) => {
+        if (typeof value === 'string') {
+          const updatedCol = x + position.col;
+          const updatedRow = y + position.row;
+          colPositions.push(updatedCol);
+          rowPositions.push(updatedRow);
+        }
+      });
+    });
+    return { colPositions, rowPositions };
+  }, [tetromino, position]);
 
   const dropTetromino = () => {
+    const { rowPositions } = tetrominoPositions;
+    if (rowPositions.some((pos) => pos + 1 >= DEFAULT_ROW)) {
+      return;
+    }
     setPosition((prev) => ({
-      x: prev.x,
-      y: prev.y + 1,
+      col: prev.col,
+      row: prev.row + 1,
     }));
   };
 
-  const moveTetromino = (dir) => {
+  const moveTetromino = (direction) => {
+    const { colPositions } = tetrominoPositions;
+    if (
+      colPositions.some(
+        (pos) => pos + direction < 0 || pos + direction === DEFAULT_COL
+      )
+    ) {
+      return;
+    }
     setPosition((prev) => ({
-      x: prev.x + dir,
-      y: prev.y,
+      col: prev.col + direction,
+      row: prev.row,
     }));
   };
 
@@ -39,8 +67,10 @@ export const Game = () => {
     const newBoard = createBoard();
     tetromino.shape.forEach((row, y) => {
       row.forEach((value, x) => {
+        const updatedRow = y + position.row;
+        const updatedCol = x + position.col;
         if (value !== 0) {
-          newBoard[y + position.y][x + position.x] = value;
+          newBoard[updatedRow][updatedCol] = value;
         }
       });
     });
@@ -49,27 +79,29 @@ export const Game = () => {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === 'ArrowLeft') {
-        moveTetromino(-1);
-      } else if (event.key === 'ArrowRight') {
-        moveTetromino(1);
-      } else if (event.key === 'ArrowDown') {
-        dropTetromino();
-      } else if (event.key === 'ArrowUp') {
+      if (event.key === 'ArrowUp') {
         rotateTetromino();
       }
+      if (event.key === 'ArrowLeft') {
+        moveTetromino(-1);
+      }
+      if (event.key === 'ArrowRight') {
+        moveTetromino(1);
+      }
+      if (event.key === 'ArrowDown') {
+        dropTetromino();
+      }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  });
+  }, [tetrominoPositions]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       dropTetromino();
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [tetrominoPositions]);
 
   useEffect(() => {
     updateBoard();
@@ -77,7 +109,7 @@ export const Game = () => {
 
   return (
     <div>
-      <Board board={board} />
+      <Board board={board} tetromino={tetromino} />
     </div>
   );
 };
