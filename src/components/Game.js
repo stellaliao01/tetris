@@ -3,13 +3,18 @@ import Board from './Board';
 import { randomTetromino } from './Tetrominoes';
 import { DEFAULT_ROW, DEFAULT_COL } from '../utils/constants';
 
+const INITIAL_DROP_POSITION = {
+  col: 3,
+  row: 0,
+};
+
 const createBoard = () =>
   Array.from(Array(DEFAULT_ROW), () => Array(DEFAULT_COL).fill(0));
 
 export const Game = () => {
   const [board, setBoard] = useState(createBoard());
   const [tetromino, setTetromino] = useState(randomTetromino());
-  const [position, setPosition] = useState({ col: 3, row: 0 });
+  const [position, setPosition] = useState(INITIAL_DROP_POSITION);
 
   const tetrominoPositions = useMemo(() => {
     const colPositions = [];
