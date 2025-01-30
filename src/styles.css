@@ -13,6 +13,27 @@
   border: 1px solid #ccc;
 }
 
-.cell.filled {
-  background: darkslategray;
+.cell.purple {
+  background: purple;
 }
+
+.cell.red {
+  background: red;
+}
+
+.cell.yellow {
+  background: yellow;
+}
+
+.cell.cyan {
+  background: cyan;
+}
+
+.cell.blue {
+  background: blue;
+}
+
+.cell.orange {
+  background: orange;
+}
+
