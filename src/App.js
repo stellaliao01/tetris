@@ -3,9 +3,18 @@ import { Game } from './components/Game';
 
 const App = () => {
   return (
-    <div>
-      <h1>Tetris :D</h1>
-      <Game />
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+      }}
+    >
+      <div>
+        <h1>Tetris :D</h1>
+        <Game />
+      </div>
     </div>
   );
 };
