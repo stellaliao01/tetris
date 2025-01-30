@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Board = ({ board }) => {
+const Board = ({ board, tetromino }) => {
   return (
     <div className='board'>
       {board.map((row, rowIndex) => (
@@ -8,7 +8,7 @@ const Board = ({ board }) => {
           {row.map((cell, cellIndex) => (
             <div
               key={cellIndex}
-              className={`cell ${cell ? 'filled' : ''}`}
+              className={`cell ${cell ? `${tetromino.color}` : ''}`}
             ></div>
           ))}
         </div>
